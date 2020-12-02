@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Build resources for the Hello service
+
+Resources:
+
+    Project:
+        Type: AWS::CodeBuild::Project
+        Properties:
+            Artifacts:
+                Type: NO_ARTIFACTS
+            Description: Hello service Docker container
+            Name: hello-build
+            Source:
+                Type: GITHUB
+                Location: https://github.com/stebulus/hello-svc
+            ServiceRole: !Ref BuildRole
+            Environment:
+                Type: LINUX_CONTAINER
+                ComputeType: BUILD_GENERAL1_SMALL
+                Image: aws/codebuild/standard:4.0
+                PrivilegedMode: true  # so it can build docker images
+
+    BuildRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                -   Effect: Allow
+                    Principal:
+                        Service:
+                            codebuild.amazonaws.com
+                    Action:
+                        - sts:AssumeRole

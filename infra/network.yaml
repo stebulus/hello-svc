@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Network for the Hello service
+
+Parameters:
+
+    ExportPrefix:
+        Type: String
+
+Outputs:
+
+    Vpc:
+        Value: !Ref Vpc
+        Export:
+            Name: !Sub ${ExportPrefix}-vpc
+
+    Subnet1:
+        Value: !Ref Subnet1
+        Export:
+            Name: !Sub ${ExportPrefix}-subnet1
+
+    Subnet2:
+        Value: !Ref Subnet2
+        Export:
+            Name: !Sub ${ExportPrefix}-subnet2
+
+Resources:
+
+    Subnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref Vpc
+            AvailabilityZone: !Sub ${AWS::Region}a
+            CidrBlock: 192.168.1.0/24
+
+    Subnet2:
+        Type: AWS::EC2::Subnet
+        Properties:
+            VpcId: !Ref Vpc
+            AvailabilityZone: !Sub ${AWS::Region}b
+            CidrBlock: 192.168.2.0/24
+
+    Vpc:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 192.168.0.0/16
+
+    GatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+          InternetGatewayId: !Ref Gateway
+          VpcId: !Ref Vpc
+
+    Gateway:
+        Type: AWS::EC2::InternetGateway
+        Properties: {}
