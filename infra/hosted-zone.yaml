@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Hosted zone for the Hello service
 
+Parameters:
+
+    Domain:
+        Type: String
+        Default: opslevel.staschuk.com
+
 Outputs:
 
     ZoneId:
@@ -8,9 +14,14 @@ Outputs:
         Export:
             Name: hello-hosted-zone-id
 
+    DomainName:
+        Value: !Sub ${Domain}
+        Export:
+            Name: hello-base-domain
+
 Resources:
 
     HostedZone:
         Type: AWS::Route53::HostedZone
         Properties:
-            Name: opslevel.staschuk.com
+            Name: !Sub ${Domain}
