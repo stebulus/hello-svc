@@ -138,4 +138,4 @@ Resources:
                     Statement:
                     -   Effect: Allow
                         Action: secretsmanager:GetSecretValue
-                        Resource: arn:aws:secretsmanager:us-east-2:335608616406:secret:opslevel-interview-??????
+                        Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:opslevel-interview-??????
