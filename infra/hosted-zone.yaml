@@ -8,7 +8,7 @@ Outputs:
         Export:
             Name: hello-hosted-zone-id
 
-Parameters:
+Resources:
 
     HostedZone:
         Type: AWS::Route53::HostedZone
