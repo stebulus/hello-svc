@@ -145,7 +145,5 @@ Resources:
                     Statement:
                     -   Effect: Allow
                         Action:
-                        -   ecr:CompleteLayerUpload
-                        -   ecr:InitiateLayerUpload
-                        -   ecr:UploadLayerPart
+                        -   ecr:*
                         Resource: !GetAtt Repository.Arn
