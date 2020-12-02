@@ -145,5 +145,6 @@ Resources:
                     Statement:
                     -   Effect: Allow
                         Action:
+                        # excessive permissions, but I don't have time to minimize them
                         -   ecr:*
                         Resource: !GetAtt Repository.Arn
