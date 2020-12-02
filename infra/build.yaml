@@ -132,3 +132,10 @@ Resources:
                         }
                       ]
                     }
+            -   PolicyName: HelloBuildSecrets
+                PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                    -   Effect: Allow
+                        Action: secretsmanager:GetSecretValue
+                        Resource: arn:aws:secretsmanager:us-east-2:335608616406:secret:opslevel-interview-??????
