@@ -47,3 +47,88 @@ Resources:
                             codebuild.amazonaws.com
                     Action:
                         - sts:AssumeRole
+            Policies:
+            -   PolicyName: HelloCodeBuildServiceRole
+                PolicyDocument:
+                    # suitable permissions according to
+                    # https://docs.aws.amazon.com/codebuild/latest/userguide/setting-up.html#setting-up-service-role
+                    {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Sid": "CloudWatchLogsPolicy",
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            "*"
+                          ]
+                        },
+                        {
+                          "Sid": "CodeCommitPolicy",
+                          "Effect": "Allow",
+                          "Action": [
+                            "codecommit:GitPull"
+                          ],
+                          "Resource": [
+                            "*"
+                          ]
+                        },
+                        {
+                          "Sid": "S3GetObjectPolicy",
+                          "Effect": "Allow",
+                          "Action": [
+                            "s3:GetObject",
+                            "s3:GetObjectVersion"
+                          ],
+                          "Resource": [
+                            "*"
+                          ]
+                        },
+                        {
+                          "Sid": "S3PutObjectPolicy",
+                          "Effect": "Allow",
+                          "Action": [
+                            "s3:PutObject"
+                          ],
+                          "Resource": [
+                            "*"
+                          ]
+                        },
+                        {
+                          "Sid": "ECRPullPolicy",
+                          "Effect": "Allow",
+                          "Action": [
+                            "ecr:BatchCheckLayerAvailability",
+                            "ecr:GetDownloadUrlForLayer",
+                            "ecr:BatchGetImage"
+                          ],
+                          "Resource": [
+                            "*"
+                          ]
+                        },
+                        {
+                          "Sid": "ECRAuthPolicy",
+                          "Effect": "Allow",
+                          "Action": [
+                            "ecr:GetAuthorizationToken"
+                          ],
+                          "Resource": [
+                            "*"
+                          ]
+                        },
+                        {
+                          "Sid": "S3BucketIdentity",
+                          "Effect": "Allow",
+                          "Action": [
+                            "s3:GetBucketAcl",
+                            "s3:GetBucketLocation"
+                          ],
+                          "Resource": 
+                            "*"
+                        }
+                      ]
+                    }
