@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Hosted zone for the Hello service
+
+Outputs:
+
+    ZoneId:
+        Value: !Ref HostedZone
+        Export:
+            Name: hello-hosted-zone-id
+
+Parameters:
+
+    HostedZone:
+        Type: AWS::Route53::HostedZone
+        Properties:
+            Name: opslevel-staschuk.com

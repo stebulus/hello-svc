@@ -6,6 +6,9 @@ Parameters:
     ExportPrefix:
         Type: String
 
+    EnvironmentName:
+        Type: String
+
 Resources:
 
     # redirect http requests to https
@@ -35,6 +38,8 @@ Resources:
             -   Type: fixed-response
                 FixedResponseConfig:
                     StatusCode: "444"
+            Certificates:
+            -   CertificateArn: !Ref Certificate
 
     LoadBalancer:
         Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -66,3 +71,23 @@ Resources:
                 IpProtocol: tcp
                 FromPort: 443
                 ToPort: 443
+
+    Certificate:
+        Type: AWS::CertificateManager::Certificate
+        Properties:
+            DomainName: !Sub ${EnvironmentName}.opslevel-staschuk.com
+            ValidationMethod: DNS
+            DomainValidationOptions:
+            -   DomainName: !Sub ${EnvironmentName}.opslevel-staschuk.com
+                HostedZoneId: !ImportValue hello-hosted-zone-id
+
+    RecordSet:
+        Type: AWS::Route53::RecordSet
+        Properties:
+            AliasTarget:
+                DNSName: !GetAtt LoadBalancer.DNSName
+                HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneId
+            HostedZoneId: !ImportValue hello-hosted-zone-id
+            Name: !Sub ${EnvironmentName}.opslevel-staschuk.com
+            Type: A
+

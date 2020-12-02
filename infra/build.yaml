@@ -13,6 +13,13 @@ Resources:
             Source:
                 Type: GITHUB
                 Location: https://github.com/stebulus/hello-svc
+            Triggers:
+                Webhook: true
+                FilterGroups:
+                -   -   Type: EVENT
+                        Pattern: PUSH
+                    -   Type: HEAD_REF
+                        Pattern: "^refs/heads/dev$"
             ServiceRole: !Ref BuildRole
             Environment:
                 Type: LINUX_CONTAINER
