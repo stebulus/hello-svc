@@ -13,4 +13,4 @@ Resources:
     HostedZone:
         Type: AWS::Route53::HostedZone
         Properties:
-            Name: opslevel-staschuk.com
+            Name: opslevel.staschuk.com
