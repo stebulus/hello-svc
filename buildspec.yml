@@ -8,4 +8,5 @@ phases:
         -   tag="$ECR_REPOSITORY:git-$CODEBUILD_RESOLVED_SOURCE_VERSION"
         -   docker login -u staschuk -p "$DOCKER_HUB_ACCESS_TOKEN"
         -   docker build src -t "$tag"
+        -   $(aws ecr get-login --no-include-email)
         -   docker push "$tag"
