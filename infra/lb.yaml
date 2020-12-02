@@ -76,10 +76,10 @@ Resources:
         Type: AWS::CertificateManager::Certificate
         DependsOn: RecordSet
         Properties:
-            DomainName: !Sub ${EnvironmentName}.opslevel-staschuk.com
+            DomainName: !Sub ${EnvironmentName}.opslevel.staschuk.com
             ValidationMethod: DNS
             DomainValidationOptions:
-            -   DomainName: !Sub ${EnvironmentName}.opslevel-staschuk.com
+            -   DomainName: !Sub ${EnvironmentName}.opslevel.staschuk.com
                 HostedZoneId: !ImportValue hello-hosted-zone-id
 
     RecordSet:
@@ -89,6 +89,6 @@ Resources:
                 DNSName: !GetAtt LoadBalancer.DNSName
                 HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
             HostedZoneId: !ImportValue hello-hosted-zone-id
-            Name: !Sub ${EnvironmentName}.opslevel-staschuk.com
+            Name: !Sub ${EnvironmentName}.opslevel.staschuk.com
             Type: A
 
