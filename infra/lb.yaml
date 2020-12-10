@@ -82,6 +82,15 @@ Resources:
         Properties:
             ListenerArn: !Ref HTTPSListener
             Priority: 1000
+            Conditions:
+            -   Field: host-header
+                HostHeaderConfig:
+                    Values:
+                    -   Fn::Join:
+                        -   .
+                        -   -   !Sub ${EnvironmentName}
+                            -   opslevel
+                            -   !ImportValue hello-base-domain
             Actions:
             -   Type: forward
                 TargetGroupArn: !Ref TargetGroup
