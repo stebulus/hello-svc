@@ -10,3 +10,4 @@ phases:
         -   docker build src -t "$tag"
         -   $(aws ecr get-login --no-include-email)
         -   docker push "$tag"
+        -   echo "$tag"
