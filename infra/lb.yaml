@@ -77,6 +77,15 @@ Resources:
                 Fn::ImportValue:
                     !Sub "hello-${EnvironmentName}-vpc"
 
+    ListenerRule:
+        Type: AWS::ElasticLoadBalancingV2::ListenerRule
+        Properties:
+            ListenerArn: !Ref HTTPSListener
+            Priority: 1000
+            Actions:
+            -   Type: forward
+                TargetGroupArn: !Ref TargetGroup
+
     LBSecurityGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
