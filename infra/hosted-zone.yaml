@@ -1,27 +1,29 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Hosted zone for the Hello service
-
-Parameters:
-
-    Domain:
-        Type: String
-        Default: opslevel.staschuk.com
+Description: Hosted zone ID
 
 Outputs:
 
     ZoneId:
-        Value: !Ref HostedZone
+        Value: Z0569336XC4YIKH43YJN
         Export:
             Name: hello-hosted-zone-id
 
     DomainName:
-        Value: !Sub ${Domain}
+        Value: staschuk.com
         Export:
             Name: hello-base-domain
 
+# The zone itself is created by the Route 53 registrar
+# and not managed by CloudFormation.
+# NullResource is a hack to work around CloudFormation's insistence
+# that there be at least one resource in the template.
+
 Resources:
 
-    HostedZone:
-        Type: AWS::Route53::HostedZone
-        Properties:
-            Name: !Sub ${Domain}
+    NullResource:
+        Type: Custom::Null
+        Condition: Never
+
+Conditions:
+
+    Never: !Equals [0, 1]

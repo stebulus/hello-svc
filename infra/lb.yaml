@@ -3,11 +3,25 @@ Description: Load balancer for the Hello service
 
 Parameters:
 
-    ExportPrefix:
-        Type: String
-
     EnvironmentName:
         Type: String
+
+Outputs:
+
+    LoadBalancer:
+        Value: !Ref LoadBalancer
+        Export:
+            Name: !Sub hello-${EnvironmentName}-lb
+
+    TargetGroup:
+        Value: !Ref TargetGroup
+        Export:
+            Name: !Sub hello-${EnvironmentName}-target-group
+
+    SecurityGroup:
+        Value: !Ref LBSecurityGroup
+        Export:
+            Name: !Sub hello-${EnvironmentName}-lb-sg
 
 Resources:
 
@@ -49,9 +63,18 @@ Resources:
             -   !Ref LBSecurityGroup
             Subnets:
             -   Fn::ImportValue:
-                    !Sub "${ExportPrefix}-subnet1"
+                    !Sub "hello-${EnvironmentName}-subnet1"
             -   Fn::ImportValue:
-                    !Sub "${ExportPrefix}-subnet2"
+                    !Sub "hello-${EnvironmentName}-subnet2"
+
+    TargetGroup:
+        Type: AWS::ElasticLoadBalancingV2::TargetGroup
+        Properties:
+            Port: 8080
+            Protocol: HTTP
+            VpcId:
+                Fn::ImportValue:
+                    !Sub "hello-${EnvironmentName}-vpc"
 
     LBSecurityGroup:
         Type: AWS::EC2::SecurityGroup
@@ -59,7 +82,7 @@ Resources:
             GroupDescription: Load balancer
             VpcId:
                 Fn::ImportValue:
-                    !Sub "${ExportPrefix}-vpc"
+                    !Sub "hello-${EnvironmentName}-vpc"
             SecurityGroupIngress:
             -   Description: Public access to HTTP port
                 CidrIp: 0.0.0.0/0
@@ -80,6 +103,7 @@ Resources:
                 Fn::Join:
                 -   .
                 -   -   !Sub ${EnvironmentName}
+                    -   opslevel
                     -   !ImportValue hello-base-domain
             ValidationMethod: DNS
             DomainValidationOptions:
@@ -87,6 +111,7 @@ Resources:
                     Fn::Join:
                     -   .
                     -   -   !Sub ${EnvironmentName}
+                        -   opslevel
                         -   !ImportValue hello-base-domain
                 HostedZoneId: !ImportValue hello-hosted-zone-id
 
@@ -101,6 +126,7 @@ Resources:
                 Fn::Join:
                 -   .
                 -   -   !Sub ${EnvironmentName}
+                    -   opslevel
                     -   !ImportValue hello-base-domain
             Type: A
 

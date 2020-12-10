@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+here=$(dirname "${BASH_SOURCE[0]}")
+
+. "$here"/lib.sh
+
+for stack in hosted-zone build; do
+    cfdeploy \
+        --template-file="$here/$stack".yaml \
+        --stack-name=hello-"$stack" \
+        --capabilities CAPABILITY_IAM
+done
+
+for env in staging production; do
+    for stack in network lb; do
+        cfdeploy \
+            --template-file="$here/$stack".yaml \
+            --stack-name=hello-"$stack"-"$env" \
+            --parameter-overrides EnvironmentName="$env"
+    done
+done

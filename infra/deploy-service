@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+here=$(dirname "${BASH_SOURCE[0]}")
+
+if [ $# -ne 2 ]; then
+    echo >&2 "usage: $0 environment_name docker_image"
+    exit 1
+fi
+env=$1
+image=$2
+
+. "$here"/lib.sh
+
+cfdeploy \
+    --template-file="$here"/service.yaml \
+    --stack-name=hello-service-"$env" \
+    --capabilities CAPABILITY_IAM \
+    --parameter-overrides \
+        EnvironmentName="$env" \
+        DockerImage="$image"

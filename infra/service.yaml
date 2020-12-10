@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: The Hello service proper
+
+Parameters:
+
+    DockerImage:
+        Type: String
+
+    EnvironmentName:
+        Type: String
+
+Resources:
+
+    Cluster:
+        Type: AWS::ECS::Cluster
+        Properties: {}
+
+    Service:
+        Type: AWS::ECS::Service
+        Properties:
+            Cluster: !Ref Cluster
+            DeploymentController:
+                Type: ECS
+            DesiredCount: 1
+            LaunchType: FARGATE
+            LoadBalancers:
+            -   ContainerName: hello
+                ContainerPort: 8080
+                TargetGroupArn:
+                    Fn::ImportValue:
+                        !Sub "hello-${EnvironmentName}-target-group"
+            NetworkConfiguration:
+                AwsvpcConfiguration:
+                    AssignPublicIp: ENABLED
+                    SecurityGroups:
+                    -   !Ref TaskSecurityGroup
+                    Subnets:
+                    -   Fn::ImportValue:
+                            !Sub "hello-${EnvironmentName}-subnet1"
+                    -   Fn::ImportValue:
+                            !Sub "hello-${EnvironmentName}-subnet2"
+            TaskDefinition: !Ref TaskDefinition
+
+    TaskDefinition:
+        Type: AWS::ECS::TaskDefinition
+        Properties:
+            Cpu: 256
+            Memory: 512
+            NetworkMode: awsvpc
+            RequiresCompatibilities:
+            -   FARGATE
+            ExecutionRoleArn: !Ref ExecutionRole
+            ContainerDefinitions:
+            -   Name: hello
+                Image: !Ref DockerImage
+                Environment:
+                -   Name: ENV
+                    Value: !Ref EnvironmentName
+                PortMappings:
+                -   ContainerPort: 8080
+
+    TaskSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Hello service
+            SecurityGroupIngress:
+            -   FromPort: 8080
+                ToPort: 8080
+                IpProtocol: tcp
+                SourceSecurityGroupId:
+                    Fn::ImportValue:
+                        !Sub "hello-${EnvironmentName}-lb-sg"
+            VpcId:
+                Fn::ImportValue:
+                    !Sub "hello-${EnvironmentName}-vpc"
+
+    ExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Sid": "",
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": "ecs-tasks.amazonaws.com"
+                      },
+                      "Action": "sts:AssumeRole"
+                    }
+                  ]
+                }
+            ManagedPolicyArns:
+            -   arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy

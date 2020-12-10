@@ -3,7 +3,7 @@ Description: Network for the Hello service
 
 Parameters:
 
-    ExportPrefix:
+    EnvironmentName:
         Type: String
 
 Outputs:
@@ -11,17 +11,17 @@ Outputs:
     Vpc:
         Value: !Ref Vpc
         Export:
-            Name: !Sub ${ExportPrefix}-vpc
+            Name: !Sub hello-${EnvironmentName}-vpc
 
     Subnet1:
         Value: !Ref Subnet1
         Export:
-            Name: !Sub ${ExportPrefix}-subnet1
+            Name: !Sub hello-${EnvironmentName}-subnet1
 
     Subnet2:
         Value: !Ref Subnet2
         Export:
-            Name: !Sub ${ExportPrefix}-subnet2
+            Name: !Sub hello-${EnvironmentName}-subnet2
 
 Resources:
 
@@ -53,3 +53,27 @@ Resources:
     Gateway:
         Type: AWS::EC2::InternetGateway
         Properties: {}
+
+    RouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref Vpc
+
+    Route:
+        Type: AWS::EC2::Route
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref Gateway
+            RouteTableId: !Ref RouteTable
+
+    Subnet1Assoc:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTable
+            SubnetId: !Ref Subnet1
+
+    Subnet2Assoc:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTable
+            SubnetId: !Ref Subnet2
